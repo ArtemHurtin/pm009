@@ -2,16 +2,106 @@ import React, { useState, useEffect } from 'react';
 import { getMenuItems } from '../../services/api';
 import './MenuPage.css';
 
+// Mock данные меню
+const mockMenuItems = [
+  {
+    id: '1',
+    name: 'Эспрессо',
+    description: 'Классический крепкий кофе из отборных арабских зерен',
+    price: 180,
+    category: 'coffee',
+    isBestseller: true,
+    allergens: 'кофеин'
+  },
+  {
+    id: '2',
+    name: 'Капучино',
+    description: 'Нежный кофе с молочной пенкой и рисунком на поверхности',
+    price: 220,
+    category: 'coffee',
+    isBestseller: true
+  },
+  {
+    id: '3',
+    name: 'Латте с сиропом',
+    description: 'Кофе с молоком и выбором сиропа (ваниль, карамель, клен)',
+    price: 250,
+    category: 'coffee'
+  },
+  {
+    id: '4',
+    name: 'Тирамису',
+    description: 'Классический итальянский десерт с кофейной пропиткой',
+    price: 280,
+    category: 'desserts',
+    isBestseller: true,
+    allergens: 'глютен, лактоза'
+  },
+  {
+    id: '5',
+    name: 'Чизкейк Нью-Йорк',
+    description: 'Нежный чизкейк с ягодным соусом',
+    price: 260,
+    category: 'desserts'
+  },
+  {
+    id: '6',
+    name: 'Веганский брауни',
+    description: 'Шоколадный брауни без продуктов животного происхождения',
+    price: 200,
+    category: 'desserts',
+    isVegan: true
+  },
+  {
+    id: '7',
+    name: 'Английский завтрак',
+    description: 'Яичница, бекон, фасоль, грибы и тосты',
+    price: 350,
+    category: 'breakfast',
+    allergens: 'глютен, лактоза, яйца'
+  },
+  {
+    id: '8',
+    name: 'Сырники',
+    description: 'Домашние сырники со сметаной и ягодным джемом',
+    price: 280,
+    category: 'breakfast',
+    isBestseller: true
+  },
+  {
+    id: '9',
+    name: '1984',
+    description: 'Джордж Оруэлл - антиутопия о тоталитарном обществе',
+    price: 450,
+    category: 'books',
+    author: 'Джордж Оруэлл'
+  },
+  {
+    id: '10',
+    name: 'Мастер и Маргарита',
+    description: 'Михаил Булгаков - мистический роман о добре и зле',
+    price: 420,
+    category: 'books',
+    author: 'Михаил Булгаков',
+    isBestseller: true
+  }
+];
+
+// Mock функция API
+const getMenuItems = async () => {
+  return new Promise(resolve => setTimeout(() => resolve(mockMenuItems), 800));
+};
+
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState('coffee');
   const [loading, setLoading] = useState(true);
 
   const categories = [
-    { id: 'coffee', name: 'Кофе', icon: '' },
-    { id: 'desserts', name: 'Десерты', icon: '' },
-    { id: 'breakfast', name: 'Завтраки', icon: '' },
-    { id: 'books', name: 'Книги', icon: '' }
+    { id: 'coffee', name: 'Кофе', icon: '☕' },
+    { id: 'desserts', name: 'Десерты', icon: '🍰' },
+    { id: 'breakfast', name: 'Завтраки', icon: '🥐' },
+    { id: 'books', name: 'Книги', icon: '📚' }
   ];
 
   useEffect(() => {
@@ -98,7 +188,7 @@ const MenuPage = () => {
 
           {filteredItems.length === 0 && (
             <div className="empty-state">
-              <div className="empty-icon"></div>
+              <div className="empty-icon">📝</div>
               <h3>В этой категории пока нет позиций</h3>
               <p>Скоро мы добавим новые items в меню</p>
             </div>
