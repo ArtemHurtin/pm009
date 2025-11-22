@@ -1,38 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import HeroSlider from '../../components/HeroSlider/HeroSlider';
-import Testimonials from '../../components/Testimonials/Testimonials';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './HomePage.css';
 
-// Mock данные и функции
-const mockMenuItems = [
-  {
-    id: '1',
-    name: 'Эспрессо',
-    description: 'Классический крепкий кофе из отборных арабских зерен',
-    price: 180,
-    category: 'coffee',
-    isBestseller: true
-  },
-  {
-    id: '2',
-    name: 'Капучино',
-    description: 'Нежный кофе с молочной пенкой и рисунком на поверхности',
-    price: 220,
-    category: 'coffee',
-    isBestseller: true
-  },
-  {
-    id: '3',
-    name: 'Латте с сиропом',
-    description: 'Кофе с молоком и выбором сиропа (ваниль, карамель, клен)',
-    price: 250,
-    category: 'coffee'
-  }
-];
+const HomePage = () => {
+  const menuItems = [
+    {
+      id: '1',
+      name: 'Эспрессо',
+      description: 'Классический крепкий кофе из отборных арабских зерен',
+      price: 180,
+    },
+    {
+      id: '2',
+      name: 'Капучино',
+      description: 'Нежный кофе с молочной пенкой и рисунком на поверхности',
+      price: 220,
+    },
+    {
+      id: '3',
+      name: 'Латте с сиропом',
+      description: 'Кофе с молоком и выбором сиропа (ваниль, карамель, клен)',
+      price: 250,
+    }
+  ];
 
-const mockEvents = [
-  {
-    id: '1',
+  const events = [
+    {
+     id: '1',
     title: 'Встреча с Мариной Москвиной',
     description: 'Тема: «Путешествие писателя сквозь детские мечты».Открытость автора и интерактивная беседа с читателями',
     date: '2 ноября',
@@ -48,11 +42,11 @@ const mockEvents = [
     time: '18:00',
     maxParticipants: 15,
     registeredUsers: 8
-  }
-];
+    }
+  ];
 
-const mockReviews = [
-  {
+  const reviews = [
+   {
     id: '1',
     authorName: 'Еремей',
     text: 'Приятное уютное местечко, идеальное для любителей кофе и книг одновременно. Атмосфера здесь спокойная и располагающая к чтению или работе над проектами. Бариста внимательные, готовят вкусный капучино и латте. Единственный минус — немного тесновато внутри, особенно в часы пик. Но в целом рекомендую!',
@@ -83,101 +77,31 @@ const mockReviews = [
     rating: 4,
     createdAt: '2024-01-22',
     status: 'approved'
-  }
-];
-
-// Mock API функции
-const getReviews = async () => {
-  return new Promise(resolve => setTimeout(() => resolve(mockReviews), 600));
-};
-
-const createReview = async (reviewData) => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.log('Review submitted:', reviewData);
-      resolve({ success: true, message: 'Отзыв отправлен на модерацию.' });
-    }, 1200);
-  });
-};
-
-const getEvents = async () => {
-  return new Promise(resolve => setTimeout(() => resolve(mockEvents), 700));
-};
-
-const getMenuItems = async () => {
-  return new Promise(resolve => setTimeout(() => resolve(mockMenuItems), 800));
-};
-
-const HomePage = () => {
-  const [reviews, setReviews] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const [reviewsData, eventsData, menuData] = await Promise.all([
-          getReviews(),
-          getEvents(),
-          getMenuItems()
-        ]);
-        setReviews(reviewsData);
-        setEvents(eventsData);
-        setMenuItems(menuData.filter(item => item.category === 'coffee').slice(0, 3));
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  const slides = [
-    {
-      id: 1,
-      title: "Мастер-класс «Волшебная шкатулка художника»",
-      description: "Изготовление оригинальной шкатулки для хранения творческих сокровищ",
-      buttonText: "Посмотреть",
-      buttonLink: "/menu",
-      image: "/api/placeholder/1200/600"
-    },
-    {
-      id: 2,
-      title: "Вечер поэзии «Звезды Серебряного века»",
-      description: "9 ноября, 19:00 - Программа вечера включает поэтическое исполнение произведений русских классиков",
-      buttonText: "Узнать больше",
-      buttonLink: "/events",
-      image: "/api/placeholder/1200/600"
-    },
-    {
-      id: 3,
-      title: "Выставка иллюстраций и рисунков современных авторов",
-      description: "Приходите увидеть талантливых художников современности!",
-      buttonText: "Посмотреть",
-      buttonLink: "/menu",
-      image: "/api/placeholder/1200/600"
-    }
+   }
   ];
-
-  if (loading) {
-    return <div className="loading">Загрузка...</div>;
-  }
 
   return (
     <div className="home-page">
-      <HeroSlider slides={slides} />
-      
+      <section className="hero-section">
+        <div className="container">
+          <div className="hero-content">
+            <h1>Кофейня "Лучшие книги"</h1>
+            <p>Место, где встречаются ароматный кофе и увлекательные книги</p>
+            <div className="hero-buttons">
+              <Link to="/menu" className="btn btn-primary">Посмотреть меню</Link>
+              <Link to="/booking" className="btn btn-secondary">Забронировать столик</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="about-section">
         <div className="container">
           <h2 className="section-title">Добро пожаловать в нашу кофейню</h2>
           <div className="about-content">
             <div className="about-text">
               <p className="about-intro">
-                «книжный дом» — это уникальное пространство, где аромат свежесваренного кофе 
+                «Лучшие книги» — это уникальное пространство, где аромат свежесваренного кофе 
                 встречается с запахом старых переплетов. Мы создали место, где можно уединиться 
                 с хорошей книгой, провести деловую встречу или просто насладиться моментом.
               </p>
@@ -228,7 +152,7 @@ const HomePage = () => {
             ))}
           </div>
           <div className="text-center">
-            <a href="/menu" className="btn btn-secondary">Всё меню</a>
+            <Link to="/menu" className="btn btn-secondary">Всё меню</Link>
           </div>
         </div>
       </section>
@@ -247,7 +171,7 @@ const HomePage = () => {
                 </div>
                 <div className="event-info">
                   <h3>{event.title}</h3>
-                  <p className="event-time"> {event.time}</p>
+                  <p className="event-time">🕒 {event.time}</p>
                   <p className="event-description">{event.description}</p>
                   <div className="event-meta">
                     <span>👥 {event.registeredUsers} участников</span>
@@ -257,16 +181,39 @@ const HomePage = () => {
             ))}
           </div>
           <div className="text-center">
-            <a href="/events" className="btn btn-secondary">Все мероприятия</a>
+            <Link to="/events" className="btn btn-secondary">Все мероприятия</Link>
           </div>
         </div>
       </section>
 
-      <Testimonials 
-        reviews={reviews} 
-        onReviewSubmit={createReview}
-        onReviewAdded={() => getReviews().then(setReviews)}
-      />
+      <section className="testimonials-section">
+        <div className="container">
+          <h2 className="section-title">Отзывы наших гостей</h2>
+          <div className="reviews-grid">
+            {reviews.map(review => (
+              <div key={review.id} className="review-card">
+                <div className="review-header">
+                  <div className="review-author">
+                    <span className="author-avatar">
+                      {review.authorName.charAt(0).toUpperCase()}
+                    </span>
+                    <div>
+                      <span className="author-name">{review.authorName}</span>
+                      <div className="review-rating">
+                        {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                      </div>
+                    </div>
+                  </div>
+                  <span className="review-date">
+                    {new Date(review.createdAt).toLocaleDateString('ru-RU')}
+                  </span>
+                </div>
+                <p className="review-text">"{review.text}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

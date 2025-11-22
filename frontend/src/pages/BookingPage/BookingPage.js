@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { createBooking } from '/../services/api';
 import './BookingPage.css';
 
 // Mock функция API
@@ -104,7 +103,7 @@ const BookingPage = () => {
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => handleChange('phone', e.target.value)}
-                    placeholder="+7 (999) 123-45-67"
+                    placeholder="8-956-123-00-05"
                     required
                   />
                 </div>
@@ -193,13 +192,13 @@ const BookingPage = () => {
 
               {submitStatus === 'success' && (
                 <div className="success-message">
-                   Столик успешно забронирован! Ждём вас в кофейне. Подтверждение отправлено на вашу почту.
+                  ✅ Столик успешно забронирован! Ждём вас в кофейне. Подтверждение отправлено на вашу почту.
                 </div>
               )}
 
               {submitStatus === 'error' && (
                 <div className="error-message">
-                   Произошла ошибка при бронировании. Пожалуйста, попробуйте ещё раз или позвоните нам.
+                  ❌ Произошла ошибка при бронировании. Пожалуйста, попробуйте ещё раз или позвоните нам.
                 </div>
               )}
             </form>
@@ -209,11 +208,11 @@ const BookingPage = () => {
             <div className="info-card">
               <h3> Бронирование по телефону</h3>
               <p>Если у вас возникли трудности с онлайн-бронированием, звоните:</p>
-              <a href="tel:+79991234567" className="phone-link">+7 (999) 123-45-67</a>
+              <a href="tel:8-956-123-00-05" className="phone-link">8-956-123-00-05</a>
             </div>
 
             <div className="info-card">
-              <h3> Правила бронирования</h3>
+              <h3>⏰ Правила бронирования</h3>
               <ul className="rules-list">
                 <li>Столик сохраняется в течение 15 минут от указанного времени</li>
                 <li>Для компаний более 6 человек звоните заранее</li>
