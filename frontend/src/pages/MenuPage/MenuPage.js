@@ -88,9 +88,7 @@ const mockMenuItems = [
 ];
 
 // Mock функция API
-const getMenuItems = async () => {
-  return new Promise(resolve => setTimeout(() => resolve(mockMenuItems), 800));
-};
+
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
