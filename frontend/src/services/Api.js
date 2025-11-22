@@ -1,5 +1,5 @@
-// Mock данные для демонстрации работы приложения
-const mockMenuItems = [
+// Mock функции для демонстрации
+export const getMenuItems = async () => 
   {
     id: '1',
     name: 'Эспрессо',
