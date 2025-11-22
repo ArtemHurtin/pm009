@@ -2,6 +2,61 @@ import React, { useState, useEffect } from 'react';
 import { getEvents, registerForEvent } from 'services/api';
 import './EventsPage.css';
 
+// Mock данные для мероприятий
+const mockEvents = [
+  {
+    id: '1',
+    title: 'Вечер поэзии',
+    description: 'Чтение стихов современных авторов при свечах. Приносите свои произведения!',
+    date: '2024-02-15',
+    time: '19:00',
+    maxParticipants: 30,
+    registeredUsers: 15,
+    image: '/api/placeholder/400/300'
+  },
+  {
+    id: '2',
+    title: 'Мастер-класс по латте-арту',
+    description: 'Научим создавать красивые рисунки на кофе. Для начинающих и продвинутых.',
+    date: '2024-02-20',
+    time: '15:00',
+    maxParticipants: 15,
+    registeredUsers: 8,
+    image: '/api/placeholder/400/300'
+  },
+  {
+    id: '3',
+    title: 'Книжный клуб: современная проза',
+    description: 'Обсуждение новейших литературных произведений за чашкой кофе.',
+    date: '2024-02-25',
+    time: '18:00',
+    maxParticipants: 20,
+    registeredUsers: 12,
+    image: '/api/placeholder/400/300'
+  }
+];
+
+// Mock функции API
+const getEvents = async () => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(mockEvents), 500);
+  });
+};
+
+const registerForEvent = async (eventId, registrationData) => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log('Event registration:', eventId, registrationData);
+      // Находим событие и увеличиваем счетчик участников
+      const event = mockEvents.find(e => e.id === eventId);
+      if (event) {
+        event.registeredUsers += 1;
+      }
+      resolve({ success: true, message: 'Регистрация прошла успешно!' });
+    }, 1000);
+  });
+};
+
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +126,7 @@ const EventsPage = () => {
                     </span>
                   </div>
                   <h3>{event.title}</h3>
-                  <p className="event-time">🕒 {event.time}</p>
+                  <p className="event-time"> {event.time}</p>
                   <p className="event-description">{event.description}</p>
                   <div className="event-meta">
                     <span className="participants">
@@ -157,7 +212,7 @@ const EventsPage = () => {
 
           {upcomingEvents.length === 0 && (
             <div className="empty-state">
-              <div className="empty-icon">📅</div>
+              <div className="empty-icon"></div>
               <h3>Ближайших мероприятий пока нет</h3>
               <p>Следите за обновлениями, мы скоро анонсируем новые события!</p>
             </div>
