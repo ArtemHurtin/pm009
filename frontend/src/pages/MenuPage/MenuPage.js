@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getMenuItems } from '../../services/api';
+import { getMenuItems } from '/../services/api';
 import './MenuPage.css';
 
 // Mock данные меню

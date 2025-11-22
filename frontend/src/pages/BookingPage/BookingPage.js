@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createBooking } from '../../services/api';
+import { createBooking } from '/../services/api';
 import './BookingPage.css';
 
 // Mock функция API
