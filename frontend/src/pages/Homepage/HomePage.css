@@ -431,4 +431,27 @@
     gap: 1rem;
     align-items: flex-start;
   }
+
+
+}.bestseller-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #FF6B6B;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.item-image {
+  position: relative;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
 }

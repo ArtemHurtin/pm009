@@ -207,7 +207,7 @@ const seedData = async () => {
     ];
 
     await Review.insertMany(reviews);
-    console.log 'Отзывы добавлены';
+    console.log( ' Отзывы добавлены ');
 
     console.log(' Начальные данные успешно добавлены!');
     process.exit(0);
