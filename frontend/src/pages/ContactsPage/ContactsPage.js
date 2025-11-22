@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sendContactMessage } from '../../services/api';
+import { getEvents, registerForEvent } from 'services/api';
 import './ContactsPage.css';
 
 const ContactsPage = () => {
@@ -50,8 +50,8 @@ const ContactsPage = () => {
               <div className="info-icon"></div>
               <div className="info-content">
                 <h3>Адрес</h3>
-                <p>г. Москва, ул. Книжная, д. 15</p>
-                <p className="info-note">Ближайшее метро: "Библиотечная"</p>
+                <p>г. Тула ул. Тихорецкая 25</p>
+               
               </div>
             </div>
 
@@ -59,8 +59,8 @@ const ContactsPage = () => {
               <div className="info-icon"></div>
               <div className="info-content">
                 <h3>Телефон</h3>
-                <a href="tel:+79991234567" className="contact-link">+7 (999) 123-45-67</a>
-                <p className="info-note">Ежедневно с 8:00 до 22:00</p>
+                <a href="tel:8-956-123-00-05" className="contact-link">8-956-123-00-05</a>
+                <p className="info-note">Ежедневно с 9:00 до 18:00</p>
               </div>
             </div>
 
@@ -71,14 +71,14 @@ const ContactsPage = () => {
                 <a href="mailto:hello@bestbooks-cafe.ru" className="contact-link">
                   hello@bestbooks-cafe.ru
                 </a>
-                <p className="info-note">Для бронирования: booking@bestbooks-cafe.ru</p>
+                <p className="info-note">Для бронирования: email: Knigi@mail.ru</p>
               </div>
             </div>
 
             <div className="info-card">
               <div className="info-icon"></div>
               <div className="info-content">
-                <h3>Часы работы</h3>
+                <h3>График работы</h3>
                 <p>пн, вт, ср, чт, пт: 9:00 - 18:00</p>
                 <p>сб, вс: 9:00 - 15:00</p>
               </div>
@@ -183,9 +183,8 @@ const ContactsPage = () => {
             <div className="map-placeholder">
               <div className="map-content">
                 <h3>Кофейня "Лучшие книги"</h3>
-                <p>г. Тула
-ул. Тихорецкая 25</p>
-                <p>🕒 Пн-Пт: 8:00-22:00, Сб-Вс: 9:00-23:00</p>
+                <p>г. Тула, ул. Тихорецкая 25</p>
+                { <p>пн, вт, ср, чт, пт: 9:00 - 18:0 Сб-Вс: 9:00-23:00</p> }
                 <div className="map-actions">
                   <button className="btn btn-secondary">Построить маршрут</button>
                 </div>

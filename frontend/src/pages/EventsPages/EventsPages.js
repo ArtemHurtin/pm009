@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getEvents, registerForEvent } from '../../services/api';
+import { getEvents, registerForEvent } from 'services/api';
 import './EventsPage.css';
 
 const EventsPage = () => {
