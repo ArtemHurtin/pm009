@@ -56,7 +56,7 @@ exports.sendNewMessageNotification = async (message) => {
     const transporter = createTransporter();
     
     const mailOptions = {
-      from: `"Кофейня Лучшие книги" <${process.env.SMTP_FROM}>`,
+      from: `"Кофейня "Кофейный дом" <${process.env.SMTP_FROM}>`,
       to: process.env.ADMIN_EMAIL,
       subject: 'Новое сообщение с сайта',
       html: `
