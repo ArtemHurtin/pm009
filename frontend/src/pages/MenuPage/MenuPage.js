@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { getMenuItems } from '/../services/api';
 import './MenuPage.css';
 
 // Mock данные меню
@@ -88,7 +87,9 @@ const mockMenuItems = [
 ];
 
 // Mock функция API
-
+const getMenuItems = async () => {
+  return new Promise(resolve => setTimeout(() => resolve(mockMenuItems), 800));
+};
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -113,6 +114,8 @@ const MenuPage = () => {
       setMenuItems(data);
     } catch (error) {
       console.error('Error loading menu:', error);
+      // В случае ошибки используем mock данные
+      setMenuItems(mockMenuItems);
     } finally {
       setLoading(false);
     }
@@ -160,7 +163,7 @@ const MenuPage = () => {
               <div key={item.id} className="menu-item">
                 <div className="item-image">
                   <div className="image-placeholder">
-                    <span>{item.name}</span>
+                    <span>{item.name.charAt(0)}</span>
                   </div>
                   {item.isVegan && <span className="vegan-badge">Vegan</span>}
                   {item.isBestseller && <span className="bestseller-badge">Хит</span>}
@@ -174,6 +177,11 @@ const MenuPage = () => {
                   {item.allergens && (
                     <div className="item-allergens">
                       <span>Аллергены: {item.allergens}</span>
+                    </div>
+                  )}
+                  {item.author && (
+                    <div className="item-author">
+                      <span>Автор: {item.author}</span>
                     </div>
                   )}
                   <div className="item-actions">
