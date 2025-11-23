@@ -11,8 +11,7 @@ const mockEvents = [
     displayDate: '2 ноября',
     time: '15:00',
     maxParticipants: 30,
-    registeredUsers: 15,
-    image: '/api/placeholder/400/300'
+    registeredUsers: 15
   },
   {
     id: '2',
@@ -22,8 +21,7 @@ const mockEvents = [
     displayDate: '3 ноября',
     time: '18:00',
     maxParticipants: 15,
-    registeredUsers: 8,
-    image: '/api/placeholder/400/300'
+    registeredUsers: 8
   },
   {
     id: '3',
@@ -33,8 +31,7 @@ const mockEvents = [
     displayDate: '4 ноября',
     time: '12:00',
     maxParticipants: 20,
-    registeredUsers: 12,
-    image: '/api/placeholder/400/300'
+    registeredUsers: 12
   }
 ];
 
@@ -79,7 +76,6 @@ const EventsPage = () => {
       setEvents(data);
     } catch (error) {
       console.error('Error loading events:', error);
-   
       setEvents(mockEvents);
     } finally {
       setLoading(false);
@@ -87,7 +83,6 @@ const EventsPage = () => {
   };
 
   const handleRegister = async (eventId) => {
-    // Валидация формы
     if (!registrationForm.name || !registrationForm.email || !registrationForm.phone) {
       alert('Пожалуйста, заполните все поля');
       return;
@@ -98,7 +93,6 @@ const EventsPage = () => {
       alert('Регистрация прошла успешно!');
       setShowRegistration(null);
       setRegistrationForm({ name: '', email: '', phone: '' });
-      // Обновляем список событий
       const updatedEvents = await fetchEvents();
       setEvents(updatedEvents);
     } catch (error) {
@@ -106,7 +100,6 @@ const EventsPage = () => {
     }
   };
 
-  // Фильтруем события на будущие и прошедшие
   const today = new Date().toISOString().split('T')[0];
   const upcomingEvents = events.filter(event => event.date >= today);
   const pastEvents = events.filter(event => event.date < today);
@@ -242,9 +235,7 @@ const EventsPage = () => {
               {pastEvents.map(event => (
                 <div key={event.id} className="past-event-card">
                   <h3>{event.title}</h3>
-                  <p className="event-date">
-                    {event.displayDate}
-                  </p>
+                  <p className="event-date">{event.displayDate}</p>
                   <p>{event.description}</p>
                   <div className="event-gallery">
                     <button className="gallery-btn">

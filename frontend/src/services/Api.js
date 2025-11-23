@@ -151,46 +151,46 @@ const mockMenuItems = [
 const mockEvents = [
   {
     id: '1',
-    title: 'Вечер поэзии',
-    description: 'Чтение стихов современных авторов при свечах. Приносите свои произведения!',
-    date: '2024-02-15',
-    time: '19:00',
+    title: 'Творческое занятие «Создание книжного амулета»',
+    description: 'Создать оригинальный оберег из бумаги своими руками',
+    date: '4 ноября',
+    time: '12:00',
     maxParticipants: 30,
     registeredUsers: [
       { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567' },
       { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568' }
     ],
-    location: 'Кофейня "Лучшие книги"',
+    location: 'Кофейня "Книжный дом"',
     price: 0,
     imageUrl: '/images/events/poetry-evening.jpg'
   },
   {
     id: '2',
-    title: 'Мастер-класс по латте-арту',
-    description: 'Научим создавать красивые рисунки на кофе. Для начинающих и продвинутых.',
-    date: '2024-02-20',
-    time: '15:00',
+    title: '«Рисуем осеннюю историю»',
+    description: 'Участникам предоставляется материал для творчества',
+    date: '6 ноября',
+    time: '16:00',
     maxParticipants: 15,
     registeredUsers: [
       { name: 'Мария', email: 'maria@mail.com', phone: '+79991234569' }
     ],
-    location: 'Кофейня "Лучшие книги"',
+    location: 'Кофейня "Книжный дом"',
     price: 500,
     imageUrl: '/images/events/latte-art.jpg'
   },
   {
     id: '3',
-    title: 'Книжный клуб: современная проза',
-    description: 'Обсуждение новейших литературных произведений за чашкой кофе.',
-    date: '2024-02-25',
-    time: '18:00',
+    title: 'Мастер-класс «Волшебная шкатулка художника»',
+    description: 'Изготовление оригинальной шкатулки для хранения творческих сокровищ',
+    date: '7 ноября ',
+    time: '14:00',
     maxParticipants: 20,
     registeredUsers: [
       { name: 'Петр', email: 'petr@mail.com', phone: '+79991234570' },
       { name: 'Ольга', email: 'olga@mail.com', phone: '+79991234571' },
       { name: 'Сергей', email: 'sergey@mail.com', phone: '+79991234572' }
     ],
-    location: 'Кофейня "Лучшие книги"',
+    location: 'Кофейня "Кофейный дом"',
     price: 0,
     imageUrl: '/images/events/book-club.jpg'
   },
@@ -202,7 +202,7 @@ const mockEvents = [
     time: '19:30',
     maxParticipants: 25,
     registeredUsers: [],
-    location: 'Кофейня "Лучшие книги"',
+    location: 'Кофейня "Кофейный дом"',
     price: 300,
     imageUrl: '/images/events/author-meeting.jpg'
   }
