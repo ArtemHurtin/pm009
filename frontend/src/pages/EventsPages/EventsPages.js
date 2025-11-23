@@ -1,35 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { getEvents, registerForEvent } from 'services/api';
 import './EventsPage.css';
 
 // Mock данные для мероприятий
 const mockEvents = [
   {
     id: '1',
-    title: 'Вечер поэзии',
-    description: 'Чтение стихов современных авторов при свечах. Приносите свои произведения!',
-    date: '2024-02-15',
-    time: '19:00',
+    title: 'Встреча с Мариной Москвиной',
+    description: '«Путешествие писателя сквозь детские мечты»',
+    date: '2024-11-02',
+    displayDate: '2 ноября',
+    time: '15:00',
     maxParticipants: 30,
     registeredUsers: 15,
     image: '/api/placeholder/400/300'
   },
   {
     id: '2',
-    title: 'Мастер-класс по латте-арту',
-    description: 'Научим создавать красивые рисунки на кофе. Для начинающих и продвинутых.',
-    date: '2024-02-20',
-    time: '15:00',
+    title: 'Беседа с Дмитрием Глуховский',
+    description: '«Будущее современной русской прозы»',
+    date: '2024-11-03',
+    displayDate: '3 ноября',
+    time: '18:00',
     maxParticipants: 15,
     registeredUsers: 8,
     image: '/api/placeholder/400/300'
   },
   {
     id: '3',
-    title: 'Книжный клуб: современная проза',
-    description: 'Обсуждение новейших литературных произведений за чашкой кофе.',
-    date: '2024-02-25',
-    time: '18:00',
+    title: 'Творческое занятие «Создание книжного амулета»',
+    description: 'Задача: Создать оригинальный оберег из бумаги своими руками',
+    date: '2024-11-04',
+    displayDate: '4 ноября',
+    time: '12:00',
     maxParticipants: 20,
     registeredUsers: 12,
     image: '/api/placeholder/400/300'
@@ -37,19 +39,19 @@ const mockEvents = [
 ];
 
 // Mock функции API
-const getEvents = async () => {
+const fetchEvents = async () => {
   return new Promise(resolve => {
     setTimeout(() => resolve(mockEvents), 500);
   });
 };
 
-const registerForEvent = async (eventId, registrationData) => {
+const registerForEventAPI = async (eventId, registrationData) => {
   return new Promise(resolve => {
     setTimeout(() => {
       console.log('Event registration:', eventId, registrationData);
       // Находим событие и увеличиваем счетчик участников
       const event = mockEvents.find(e => e.id === eventId);
-      if (event) {
+      if (event && event.registeredUsers < event.maxParticipants) {
         event.registeredUsers += 1;
       }
       resolve({ success: true, message: 'Регистрация прошла успешно!' });
@@ -73,28 +75,41 @@ const EventsPage = () => {
 
   const loadEvents = async () => {
     try {
-      const data = await getEvents();
+      const data = await fetchEvents();
       setEvents(data);
     } catch (error) {
       console.error('Error loading events:', error);
+   
+      setEvents(mockEvents);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRegister = async (eventId) => {
+    // Валидация формы
+    if (!registrationForm.name || !registrationForm.email || !registrationForm.phone) {
+      alert('Пожалуйста, заполните все поля');
+      return;
+    }
+
     try {
-      await registerForEvent(eventId, registrationForm);
+      await registerForEventAPI(eventId, registrationForm);
+      alert('Регистрация прошла успешно!');
       setShowRegistration(null);
       setRegistrationForm({ name: '', email: '', phone: '' });
-      loadEvents(); // Reload to update participants count
+      // Обновляем список событий
+      const updatedEvents = await fetchEvents();
+      setEvents(updatedEvents);
     } catch (error) {
       alert('Ошибка регистрации. Попробуйте ещё раз.');
     }
   };
 
-  const upcomingEvents = events.filter(event => new Date(event.date) >= new Date());
-  const pastEvents = events.filter(event => new Date(event.date) < new Date());
+  // Фильтруем события на будущие и прошедшие
+  const today = new Date().toISOString().split('T')[0];
+  const upcomingEvents = events.filter(event => event.date >= today);
+  const pastEvents = events.filter(event => event.date < today);
 
   if (loading) {
     return <div className="loading">Загрузка мероприятий...</div>;
@@ -115,18 +130,18 @@ const EventsPage = () => {
               <div key={event.id} className="event-card">
                 <div className="event-image">
                   <div className="image-placeholder">
-                    <span>{event.title}</span>
+                    <span>{event.title.charAt(0)}</span>
                   </div>
                 </div>
                 <div className="event-content">
                   <div className="event-date-badge">
-                    <span className="date-day">{new Date(event.date).getDate()}</span>
+                    <span className="date-day">{event.displayDate.split(' ')[0]}</span>
                     <span className="date-month">
-                      {new Date(event.date).toLocaleString('ru-RU', { month: 'short' })}
+                      {event.displayDate.split(' ')[1]}
                     </span>
                   </div>
-                  <h3>{event.title}</h3>
-                  <p className="event-time"> {event.time}</p>
+                  <h3 className="event-title">{event.title}</h3>
+                  <p className="event-time">{event.displayDate} • {event.time}</p>
                   <p className="event-description">{event.description}</p>
                   <div className="event-meta">
                     <span className="participants">
@@ -193,6 +208,7 @@ const EventsPage = () => {
                         <button 
                           className="btn btn-primary"
                           onClick={() => handleRegister(event.id)}
+                          disabled={!registrationForm.name || !registrationForm.email || !registrationForm.phone}
                         >
                           Подтвердить регистрацию
                         </button>
@@ -212,7 +228,7 @@ const EventsPage = () => {
 
           {upcomingEvents.length === 0 && (
             <div className="empty-state">
-              <div className="empty-icon"></div>
+              <div className="empty-icon">📅</div>
               <h3>Ближайших мероприятий пока нет</h3>
               <p>Следите за обновлениями, мы скоро анонсируем новые события!</p>
             </div>
@@ -227,11 +243,7 @@ const EventsPage = () => {
                 <div key={event.id} className="past-event-card">
                   <h3>{event.title}</h3>
                   <p className="event-date">
-                    {new Date(event.date).toLocaleDateString('ru-RU', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
+                    {event.displayDate}
                   </p>
                   <p>{event.description}</p>
                   <div className="event-gallery">
