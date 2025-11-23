@@ -1,5 +1,9 @@
-// Базовый URL для API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Конфигурация API
+const API_CONFIG = {
+  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  DEFAULT_DELAY: 500,
+  NETWORK_ERROR_CHANCE: 0.05,
+};
 
 // Mock данные
 const mockMenuItems = [
@@ -153,7 +157,8 @@ const mockEvents = [
     id: '1',
     title: 'Творческое занятие «Создание книжного амулета»',
     description: 'Создать оригинальный оберег из бумаги своими руками',
-    date: '4 ноября',
+    date: '2024-11-04',
+    displayDate: '4 ноября',
     time: '12:00',
     maxParticipants: 30,
     registeredUsers: [
@@ -168,7 +173,8 @@ const mockEvents = [
     id: '2',
     title: '«Рисуем осеннюю историю»',
     description: 'Участникам предоставляется материал для творчества',
-    date: '6 ноября',
+    date: '2024-11-06',
+    displayDate: '6 ноября',
     time: '16:00',
     maxParticipants: 15,
     registeredUsers: [
@@ -182,7 +188,8 @@ const mockEvents = [
     id: '3',
     title: 'Мастер-класс «Волшебная шкатулка художника»',
     description: 'Изготовление оригинальной шкатулки для хранения творческих сокровищ',
-    date: '7 ноября ',
+    date: '2024-11-07',
+    displayDate: '7 ноября',
     time: '14:00',
     maxParticipants: 20,
     registeredUsers: [
@@ -199,6 +206,7 @@ const mockEvents = [
     title: 'Встреча с автором',
     description: 'Встреча с известным современным писателем и обсуждение его новой книги.',
     date: '2024-03-05',
+    displayDate: '5 марта',
     time: '19:30',
     maxParticipants: 25,
     registeredUsers: [],
@@ -249,21 +257,38 @@ const mockReviews = [
   }
 ];
 
-// Имитация задержки сети
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// Утилиты
+const delay = (ms = API_CONFIG.DEFAULT_DELAY) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Общая функция для API запросов
+const simulateNetworkError = (chance = API_CONFIG.NETWORK_ERROR_CHANCE) => {
+  if (Math.random() < chance) {
+    throw new Error('Сетевая ошибка. Пожалуйста, попробуйте еще раз.');
+  }
+};
+
+const generateId = (prefix = '') => {
+  return `${prefix}${Date.now()}${Math.random().toString(36).substr(2, 9)}`;
+};
+
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const isValidPhone = (phone) => {
+  const phoneRegex = /^\+?[78][-\(]?\d{3}\)?-?\d{3}-?\d{2}-?\d{2}$/;
+  return phoneRegex.test(phone);
+};
+
+// Базовый API клиент
 const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${API_CONFIG.BASE_URL}${endpoint}`;
   
-  const defaultOptions = {
+  const config = {
     headers: {
       'Content-Type': 'application/json',
+      ...options.headers,
     },
-  };
-
-  const config = {
-    ...defaultOptions,
     ...options,
   };
 
@@ -272,7 +297,8 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 
   try {
-    console.log(`Making API request to: ${url}`, config);
+    console.log(`API Request: ${config.method || 'GET'} ${url}`, config);
+    
     const response = await fetch(url, config);
     
     if (!response.ok) {
@@ -280,23 +306,19 @@ const apiRequest = async (endpoint, options = {}) => {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error('API request failed:', error);
-    throw error;
+    throw new Error(error.message || 'Ошибка соединения с сервером');
   }
 };
 
 // Menu API
 export const getMenuItems = async () => {
   try {
-    // Реальный API вызов (раскомментировать когда бэкенд готов)
-    // const response = await apiRequest('/menu');
-    // return response.data;
-    
     await delay(800);
-    return mockMenuItems;
+    simulateNetworkError(0.02);
+    return [...mockMenuItems];
   } catch (error) {
     console.error('Error fetching menu items:', error);
     throw error;
@@ -305,12 +327,12 @@ export const getMenuItems = async () => {
 
 export const getMenuItemsByCategory = async (category) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/menu/category/${category}`);
-    // return response.data;
-    
     await delay(500);
-    const filteredItems = mockMenuItems.filter(item => item.category === category);
+    
+    const filteredItems = mockMenuItems.filter(item => 
+      item.category === category
+    );
+    
     return filteredItems;
   } catch (error) {
     console.error(`Error fetching menu items for category ${category}:`, error);
@@ -320,15 +342,13 @@ export const getMenuItemsByCategory = async (category) => {
 
 export const getMenuItem = async (id) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/menu/${id}`);
-    // return response.data;
-    
     await delay(300);
+    
     const item = mockMenuItems.find(item => item.id === id);
     if (!item) {
-      throw new Error('Menu item not found');
+      throw new Error('Элемент меню не найден');
     }
+    
     return item;
   } catch (error) {
     console.error(`Error fetching menu item ${id}:`, error);
@@ -339,29 +359,30 @@ export const getMenuItem = async (id) => {
 // Bookings API
 export const createBooking = async (bookingData) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/bookings', {
-    //   method: 'POST',
-    //   body: bookingData
-    // });
-    // return response;
-    
     await delay(1500);
-    console.log('Booking data received:', bookingData);
-    
-    // Имитация случайных ошибок (10% chance)
-    if (Math.random() < 0.1) {
-      throw new Error('Ошибка при бронировании. Попробуйте еще раз.');
+    simulateNetworkError(0.1);
+
+    // Валидация данных
+    if (!bookingData.name || !bookingData.email || !bookingData.phone) {
+      throw new Error('Пожалуйста, заполните все обязательные поля');
     }
-    
+
+    if (!isValidEmail(bookingData.email)) {
+      throw new Error('Пожалуйста, введите корректный email');
+    }
+
+    if (!isValidPhone(bookingData.phone)) {
+      throw new Error('Пожалуйста, введите корректный номер телефона');
+    }
+
     const booking = {
-      id: 'BK' + Date.now(),
+      id: generateId('BK'),
       ...bookingData,
       status: 'confirmed',
-      bookingCode: 'BK-' + Math.random().toString(36).substr(2, 8).toUpperCase(),
+      bookingCode: `BK-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
       createdAt: new Date().toISOString()
     };
-    
+
     return {
       success: true,
       message: 'Бронирование подтверждено! Мы отправили подтверждение на вашу почту.',
@@ -376,10 +397,6 @@ export const createBooking = async (bookingData) => {
 
 export const getBookings = async () => {
   try {
-    // Реальный API вызов (для админки)
-    // const response = await apiRequest('/bookings');
-    // return response.data;
-    
     await delay(800);
     return [];
   } catch (error) {
@@ -390,20 +407,17 @@ export const getBookings = async () => {
 
 export const checkAvailability = async (date, time, guests) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/bookings/check-availability?date=${date}&time=${time}&guests=${guests}`);
-    // return response.data;
-    
     await delay(600);
-    
+
     // Имитация проверки доступности
     const isAvailable = Math.random() > 0.3; // 70% chance available
-    
+
     return {
       isAvailable,
       message: isAvailable 
         ? 'Столик доступен для бронирования' 
-        : 'На это время нет свободных столиков. Пожалуйста, выберите другое время.'
+        : 'На это время нет свободных столиков. Пожалуйста, выберите другое время.',
+      suggestedTimes: isAvailable ? [] : ['18:00', '19:30', '20:00']
     };
   } catch (error) {
     console.error('Error checking availability:', error);
@@ -414,12 +428,8 @@ export const checkAvailability = async (date, time, guests) => {
 // Events API
 export const getEvents = async () => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/events');
-    // return response.data;
-    
     await delay(700);
-    return mockEvents;
+    return [...mockEvents];
   } catch (error) {
     console.error('Error fetching events:', error);
     throw error;
@@ -428,15 +438,13 @@ export const getEvents = async () => {
 
 export const getEvent = async (id) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/events/${id}`);
-    // return response.data;
-    
     await delay(400);
+    
     const event = mockEvents.find(event => event.id === id);
     if (!event) {
-      throw new Error('Event not found');
+      throw new Error('Мероприятие не найдено');
     }
+    
     return event;
   } catch (error) {
     console.error(`Error fetching event ${id}:`, error);
@@ -446,13 +454,10 @@ export const getEvent = async (id) => {
 
 export const getUpcomingEvents = async () => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/events/upcoming');
-    // return response.data;
-    
     await delay(500);
-    const today = new Date();
-    return mockEvents.filter(event => new Date(event.date) >= today);
+    
+    const today = new Date().toISOString().split('T')[0];
+    return mockEvents.filter(event => event.date >= today);
   } catch (error) {
     console.error('Error fetching upcoming events:', error);
     throw error;
@@ -461,47 +466,48 @@ export const getUpcomingEvents = async () => {
 
 export const registerForEvent = async (eventId, registrationData) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/events/${eventId}/register`, {
-    //   method: 'POST',
-    //   body: registrationData
-    // });
-    // return response;
-    
     await delay(1200);
-    console.log('Event registration:', eventId, registrationData);
-    
-    // Находим событие
+
+    // Валидация данных
+    if (!registrationData.name || !registrationData.email || !registrationData.phone) {
+      throw new Error('Пожалуйста, заполните все обязательные поля');
+    }
+
+    if (!isValidEmail(registrationData.email)) {
+      throw new Error('Пожалуйста, введите корректный email');
+    }
+
     const event = mockEvents.find(e => e.id === eventId);
     if (!event) {
       throw new Error('Мероприятие не найдено');
     }
-    
+
     // Проверяем доступность мест
     if (event.registeredUsers.length >= event.maxParticipants) {
       throw new Error('К сожалению, все места на это мероприятие уже заняты');
     }
-    
+
     // Проверяем, не зарегистрирован ли уже пользователь
     const isAlreadyRegistered = event.registeredUsers.some(
       user => user.email === registrationData.email
     );
-    
+
     if (isAlreadyRegistered) {
       throw new Error('Вы уже зарегистрированы на это мероприятие');
     }
-    
+
     // Добавляем участника
     event.registeredUsers.push({
       ...registrationData,
       registeredAt: new Date().toISOString()
     });
-    
+
     return {
       success: true,
       message: 'Регистрация на мероприятие прошла успешно!',
       participantsCount: event.registeredUsers.length,
-      availableSpots: event.maxParticipants - event.registeredUsers.length
+      availableSpots: event.maxParticipants - event.registeredUsers.length,
+      eventTitle: event.title
     };
   } catch (error) {
     console.error('Error registering for event:', error);
@@ -511,16 +517,9 @@ export const registerForEvent = async (eventId, registrationData) => {
 
 export const createEvent = async (eventData) => {
   try {
-    // Реальный API вызов (для админки)
-    // const response = await apiRequest('/events', {
-    //   method: 'POST',
-    //   body: eventData
-    // });
-    // return response.data;
-    
     await delay(1000);
     const newEvent = {
-      id: 'EV' + Date.now(),
+      id: generateId('EV'),
       ...eventData,
       registeredUsers: [],
       createdAt: new Date().toISOString()
@@ -536,12 +535,8 @@ export const createEvent = async (eventData) => {
 // Reviews API
 export const getReviews = async () => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/reviews');
-    // return response.data;
-    
     await delay(600);
-    return mockReviews;
+    return [...mockReviews];
   } catch (error) {
     console.error('Error fetching reviews:', error);
     throw error;
@@ -550,10 +545,6 @@ export const getReviews = async () => {
 
 export const getApprovedReviews = async () => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/reviews/approved');
-    // return response.data;
-    
     await delay(500);
     return mockReviews.filter(review => review.status === 'approved');
   } catch (error) {
@@ -564,10 +555,6 @@ export const getApprovedReviews = async () => {
 
 export const getFeaturedReviews = async () => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/reviews/featured');
-    // return response.data;
-    
     await delay(400);
     return mockReviews.filter(review => review.isFeatured);
   } catch (error) {
@@ -578,30 +565,31 @@ export const getFeaturedReviews = async () => {
 
 export const createReview = async (reviewData) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/reviews', {
-    //   method: 'POST',
-    //   body: reviewData
-    // });
-    // return response;
-    
     await delay(1000);
-    console.log('Review data received:', reviewData);
-    
-    // Имитация случайных ошибок (5% chance)
-    if (Math.random() < 0.05) {
-      throw new Error('Ошибка при отправке отзыва. Попробуйте еще раз.');
+    simulateNetworkError(0.05);
+
+    // Валидация данных
+    if (!reviewData.authorName || !reviewData.email || !reviewData.text) {
+      throw new Error('Пожалуйста, заполните все обязательные поля');
     }
-    
+
+    if (!isValidEmail(reviewData.email)) {
+      throw new Error('Пожалуйста, введите корректный email');
+    }
+
+    if (reviewData.rating < 1 || reviewData.rating > 5) {
+      throw new Error('Рейтинг должен быть от 1 до 5');
+    }
+
     const newReview = {
-      id: 'RV' + Date.now(),
+      id: generateId('RV'),
       ...reviewData,
       createdAt: new Date().toISOString().split('T')[0],
       status: 'pending' // Отзыв ожидает модерации
     };
-    
+
     mockReviews.push(newReview);
-    
+
     return {
       success: true,
       message: 'Отзыв отправлен на модерацию. Спасибо за ваш отзыв!',
@@ -616,21 +604,18 @@ export const createReview = async (reviewData) => {
 // Contact API
 export const sendContactMessage = async (messageData) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest('/contacts', {
-    //   method: 'POST',
-    //   body: messageData
-    // });
-    // return response;
-    
     await delay(800);
-    console.log('Contact message received:', messageData);
-    
-    // Имитация случайных ошибок (5% chance)
-    if (Math.random() < 0.05) {
-      throw new Error('Ошибка при отправке сообщения. Попробуйте еще раз.');
+    simulateNetworkError(0.05);
+
+    // Валидация данных
+    if (!messageData.name || !messageData.email || !messageData.message) {
+      throw new Error('Пожалуйста, заполните все обязательные поля');
     }
-    
+
+    if (!isValidEmail(messageData.email)) {
+      throw new Error('Пожалуйста, введите корректный email');
+    }
+
     return {
       success: true,
       message: 'Сообщение успешно отправлено! Мы ответим вам в ближайшее время.'
@@ -643,10 +628,6 @@ export const sendContactMessage = async (messageData) => {
 
 export const getContactMessages = async () => {
   try {
-    // Реальный API вызов (для админки)
-    // const response = await apiRequest('/contacts');
-    // return response.data;
-    
     await delay(700);
     return [];
   } catch (error) {
@@ -655,16 +636,9 @@ export const getContactMessages = async () => {
   }
 };
 
-// Admin API functions (for future use)
+// Admin API functions
 export const updateBookingStatus = async (bookingId, status) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/bookings/${bookingId}/status`, {
-    //   method: 'PUT',
-    //   body: { status }
-    // });
-    // return response.data;
-    
     await delay(600);
     return { success: true, message: `Статус бронирования изменен на "${status}"` };
   } catch (error) {
@@ -675,13 +649,6 @@ export const updateBookingStatus = async (bookingId, status) => {
 
 export const updateReviewStatus = async (reviewId, status) => {
   try {
-    // Реальный API вызов
-    // const response = await apiRequest(`/reviews/${reviewId}/status`, {
-    //   method: 'PUT',
-    //   body: { status }
-    // });
-    // return response.data;
-    
     await delay(500);
     const review = mockReviews.find(r => r.id === reviewId);
     if (review) {

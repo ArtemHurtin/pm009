@@ -3,21 +3,47 @@ import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = () => {
+  // Обработчики для социальных сетей 
+  const handleTelegramClick = () => {
+   
+    console.log('Telegram link clicked');
+    alert('Ссылка на Telegram будет добавлена позже');
+  };
+
+  const handleVKClick = () => {
+    
+    console.log('VK link clicked');
+    alert('Ссылка на VK будет добавлена позже');
+  };
+
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
             <div className="footer-logo">
-              <span className="footer-logo-icon"></span>
+              <span className="footer-logo-icon">📚☕</span>
               <div>
-                <h3>Кофейня "Лучшие книги"</h3>
+                <h3>Кофейня "Кофейный дом"</h3>
                 <p>Место, где встречаются кофе и литература</p>
               </div>
             </div>
             <div className="social-links">
-              <a href="#" className="social-link">Telegram</a>
-              <a href="#" className="social-link">VK</a>
+              
+              <button 
+                type="button" 
+                className="social-link"
+                onClick={handleTelegramClick}
+              >
+                Telegram
+              </button>
+              <button 
+                type="button" 
+                className="social-link"
+                onClick={handleVKClick}
+              >
+                VK
+              </button>
             </div>
           </div>
 
@@ -51,7 +77,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2024 Кофейня "кофейный дом". Все права защищены.</p>
+          <p>&copy; 2024 Кофейня "Лучшие книги". Все права защищены.</p>
         </div>
       </div>
     </footer>
