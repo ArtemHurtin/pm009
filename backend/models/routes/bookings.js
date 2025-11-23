@@ -1,35 +1,52 @@
 const express = require('express');
 const router = express.Router();
-const bookingController = require('../controllers/bookingController');
 
-// @route   GET /api/bookings
-// @desc    Get all bookings (with filtering)
-// @access  Private/Admin
-router.get('/', bookingController.getBookings);
+// Mock данные для бронирований
+let bookings = [];
 
-// @route   GET /api/bookings/:id
-// @desc    Get single booking
-// @access  Private/Admin
-router.get('/:id', bookingController.getBooking);
+// GET /api/bookings - получить все бронирования
+router.get('/', (req, res) => {
+  res.json({
+    success: true,
+    data: bookings
+  });
+});
 
-// @route   POST /api/bookings
-// @desc    Create new booking
-// @access  Public
-router.post('/', bookingController.createBooking);
+// POST /api/bookings - создать новое бронирование
+router.post('/', (req, res) => {
+  const { name, email, phone, date, time, guests, notes } = req.body;
+  
+  const newBooking = {
+    id: Date.now().toString(),
+    name,
+    email,
+    phone,
+    date,
+    time,
+    guests,
+    notes,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+  
+  bookings.push(newBooking);
+  
+  res.json({
+    success: true,
+    message: 'Бронирование создано успешно!',
+    data: newBooking
+  });
+});
 
-// @route   PUT /api/bookings/:id/status
-// @desc    Update booking status
-// @access  Private/Admin
-router.put('/:id/status', bookingController.updateBookingStatus);
-
-// @route   DELETE /api/bookings/:id
-// @desc    Delete booking
-// @access  Private/Admin
-router.delete('/:id', bookingController.deleteBooking);
-
-// @route   GET /api/bookings/check-availability
-// @desc    Check table availability
-// @access  Public
-router.get('/check-availability', bookingController.checkAvailability);
+// DELETE /api/bookings/:id - отменить бронирование
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  bookings = bookings.filter(booking => booking.id !== id);
+  
+  res.json({
+    success: true,
+    message: 'Бронирование отменено'
+  });
+});
 
 module.exports = router;

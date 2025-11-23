@@ -1,35 +1,67 @@
 const express = require('express');
 const router = express.Router();
-const menuController = require('../controllers/menuController');
 
-// @route   GET /api/menu
-// @desc    Get all menu items
-// @access  Public
-router.get('/', menuController.getMenuItems);
+// Mock данные для меню
+const menuItems = [
+  {
+    id: 1,
+    name: 'Эспрессо',
+    category: 'coffee',
+    price: 180,
+    description: 'Классический крепкий кофе',
+    image: '/images/menu/espresso.jpg'
+  },
+  {
+    id: 2,
+    name: 'Капучино',
+    category: 'coffee',
+    price: 220,
+    description: 'Кофе с молочной пенкой',
+    image: '/images/menu/cappuccino.jpg'
+  },
+  {
+    id: 3,
+    name: 'Латте',
+    category: 'coffee',
+    price: 240,
+    description: 'Нежный кофе с большим количеством молока',
+    image: '/images/menu/latte.jpg'
+  },
+  {
+    id: 4,
+    name: 'Чизкейк',
+    category: 'desserts',
+    price: 280,
+    description: 'Нежный чизкейк с ягодным соусом',
+    image: '/images/menu/cheesecake.jpg'
+  },
+  {
+    id: 5,
+    name: 'Круассан',
+    category: 'desserts',
+    price: 150,
+    description: 'Свежий французский круассан',
+    image: '/images/menu/croissant.jpg'
+  }
+];
 
-// @route   GET /api/menu/category/:category
-// @desc    Get menu items by category
-// @access  Public
-router.get('/category/:category', menuController.getMenuByCategory);
+// GET /api/menu - получить все позиции меню
+router.get('/', (req, res) => {
+  res.json({
+    success: true,
+    data: menuItems
+  });
+});
 
-// @route   GET /api/menu/:id
-// @desc    Get single menu item
-// @access  Public
-router.get('/:id', menuController.getMenuItem);
-
-// @route   POST /api/menu
-// @desc    Create new menu item
-// @access  Private/Admin
-router.post('/', menuController.createMenuItem);
-
-// @route   PUT /api/menu/:id
-// @desc    Update menu item
-// @access  Private/Admin
-router.put('/:id', menuController.updateMenuItem);
-
-// @route   DELETE /api/menu/:id
-// @desc    Delete menu item
-// @access  Private/Admin
-router.delete('/:id', menuController.deleteMenuItem);
+// GET /api/menu/:category - получить меню по категории
+router.get('/:category', (req, res) => {
+  const category = req.params.category;
+  const filteredItems = menuItems.filter(item => item.category === category);
+  
+  res.json({
+    success: true,
+    data: filteredItems
+  });
+});
 
 module.exports = router;

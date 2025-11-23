@@ -1,40 +1,55 @@
 const express = require('express');
 const router = express.Router();
-const reviewController = require('../controllers/reviewController');
 
-// @route   GET /api/reviews
-// @desc    Get all reviews (approved only for public)
-// @access  Public
-router.get('/', reviewController.getReviews);
+// Mock данные для отзывов
+let reviews = [
+  {
+    id: 1,
+    name: 'Анна',
+    rating: 5,
+    comment: 'Прекрасное место! Отличный кофе и уютная атмосфера.',
+    date: '2024-10-15',
+    approved: true
+  },
+  {
+    id: 2,
+    name: 'Иван',
+    rating: 4,
+    comment: 'Очень понравились мероприятия, буду приходить ещё!',
+    date: '2024-10-10',
+    approved: true
+  }
+];
 
-// @route   GET /api/reviews/approved
-// @desc    Get approved reviews only
-// @access  Public
-router.get('/approved', reviewController.getApprovedReviews);
+// GET /api/reviews - получить все одобренные отзывы
+router.get('/', (req, res) => {
+  const approvedReviews = reviews.filter(review => review.approved);
+  res.json({
+    success: true,
+    data: approvedReviews
+  });
+});
 
-// @route   GET /api/reviews/featured
-// @desc    Get featured reviews
-// @access  Public
-router.get('/featured', reviewController.getFeaturedReviews);
-
-// @route   POST /api/reviews
-// @desc    Create new review
-// @access  Public
-router.post('/', reviewController.createReview);
-
-// @route   PUT /api/reviews/:id/status
-// @desc    Update review status
-// @access  Private/Admin
-router.put('/:id/status', reviewController.updateReviewStatus);
-
-// @route   PUT /api/reviews/:id/response
-// @desc    Add admin response to review
-// @access  Private/Admin
-router.put('/:id/response', reviewController.addReviewResponse);
-
-// @route   DELETE /api/reviews/:id
-// @desc    Delete review
-// @access  Private/Admin
-router.delete('/:id', reviewController.deleteReview);
+// POST /api/reviews - создать новый отзыв
+router.post('/', (req, res) => {
+  const { name, rating, comment } = req.body;
+  
+  const newReview = {
+    id: Date.now(),
+    name,
+    rating: parseInt(rating),
+    comment,
+    date: new Date().toISOString().split('T')[0],
+    approved: false // Модерация перед публикацией
+  };
+  
+  reviews.push(newReview);
+  
+  res.json({
+    success: true,
+    message: 'Отзыв отправлен на модерацию!',
+    data: newReview
+  });
+});
 
 module.exports = router;
