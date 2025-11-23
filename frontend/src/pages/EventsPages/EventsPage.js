@@ -74,17 +74,36 @@ const fetchEvents = async () => {
 };
 
 const registerForEventAPI = async (eventId, registrationData) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       console.log('Event registration:', eventId, registrationData);
-      // Находим событие и увеличиваем счетчик участников
+      
       const event = mockEvents.find(e => e.id === eventId);
-      if (event && event.registeredUsers.length < event.maxParticipants) {
-        event.registeredUsers.push({
-          ...registrationData,
-          registeredAt: new Date().toISOString()
-        });
+      if (!event) {
+        reject(new Error('Мероприятие не найдено'));
+        return;
       }
+      
+      if (event.registeredUsers.length >= event.maxParticipants) {
+        reject(new Error('Все места уже заняты'));
+        return;
+      }
+      
+      // Проверяем, не зарегистрирован ли уже пользователь с таким email
+      const existingRegistration = event.registeredUsers.find(
+        user => user.email === registrationData.email
+      );
+      
+      if (existingRegistration) {
+        reject(new Error('Пользователь с таким email уже зарегистрирован'));
+        return;
+      }
+      
+      event.registeredUsers.push({
+        ...registrationData,
+        registeredAt: new Date().toISOString()
+      });
+      
       resolve({ success: true, message: 'Регистрация прошла успешно!' });
     }, 1000);
   });
@@ -99,6 +118,7 @@ const EventsPage = () => {
     email: '',
     phone: ''
   });
+  const [registrationLoading, setRegistrationLoading] = useState(false);
 
   useEffect(() => {
     loadEvents();
@@ -110,6 +130,7 @@ const EventsPage = () => {
       setEvents(data);
     } catch (error) {
       console.error('Error loading events:', error);
+      // Fallback на mock данные в случае ошибки
       setEvents(mockEvents);
     } finally {
       setLoading(false);
@@ -117,20 +138,32 @@ const EventsPage = () => {
   };
 
   const handleRegister = async (eventId) => {
-    if (!registrationForm.name || !registrationForm.email || !registrationForm.phone) {
+    if (!registrationForm.name.trim() || !registrationForm.email.trim() || !registrationForm.phone.trim()) {
       alert('Пожалуйста, заполните все поля');
       return;
     }
+
+    // Простая валидация email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registrationForm.email)) {
+      alert('Пожалуйста, введите корректный email');
+      return;
+    }
+
+    setRegistrationLoading(true);
 
     try {
       await registerForEventAPI(eventId, registrationForm);
       alert('Регистрация прошла успешно!');
       setShowRegistration(null);
       setRegistrationForm({ name: '', email: '', phone: '' });
+      // Обновляем список мероприятий
       const updatedEvents = await fetchEvents();
       setEvents(updatedEvents);
     } catch (error) {
-      alert('Ошибка регистрации. Попробуйте ещё раз.');
+      alert(`Ошибка регистрации: ${error.message}`);
+    } finally {
+      setRegistrationLoading(false);
     }
   };
 
@@ -138,8 +171,18 @@ const EventsPage = () => {
   const upcomingEvents = events.filter(event => event.date >= today);
   const pastEvents = events.filter(event => event.date < today);
 
+  const formatPrice = (price) => {
+    return price === 0 ? 'Бесплатно' : `${price} ₽`;
+  };
+
   if (loading) {
-    return <div className="loading">Загрузка мероприятий...</div>;
+    return (
+      <div className="events-page">
+        <div className="container">
+          <div className="loading">Загрузка мероприятий...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -161,14 +204,18 @@ const EventsPage = () => {
                   </div>
                 </div>
                 <div className="event-content">
-                  <div className="event-date-badge">
-                    <span className="date-day">{event.displayDate.split(' ')[0]}</span>
-                    <span className="date-month">
-                      {event.displayDate.split(' ')[1]}
-                    </span>
+                  <div className="event-header">
+                    <div className="event-date-badge">
+                      <span className="date-day">{event.displayDate.split(' ')[0]}</span>
+                      <span className="date-month">
+                        {event.displayDate.split(' ')[1]}
+                      </span>
+                    </div>
+                    <div className="event-price">{formatPrice(event.price)}</div>
                   </div>
                   <h3 className="event-title">{event.title}</h3>
                   <p className="event-time">{event.displayDate} • {event.time}</p>
+                  <p className="event-location">{event.location}</p>
                   <p className="event-description">{event.description}</p>
                   <div className="event-meta">
                     <span className="participants">
@@ -178,6 +225,7 @@ const EventsPage = () => {
                       <button 
                         className="btn btn-primary"
                         onClick={() => setShowRegistration(event.id)}
+                        disabled={registrationLoading}
                       >
                         Зарегистрироваться
                       </button>
@@ -195,39 +243,46 @@ const EventsPage = () => {
                         <button 
                           className="close-btn"
                           onClick={() => setShowRegistration(null)}
+                          disabled={registrationLoading}
                         >
                           ×
                         </button>
                       </div>
                       <div className="modal-body">
                         <div className="form-group">
+                          <label>Ваше имя</label>
                           <input
                             type="text"
-                            placeholder="Ваше имя"
+                            placeholder="Введите ваше имя"
                             value={registrationForm.name}
                             onChange={(e) => setRegistrationForm(prev => ({
                               ...prev, name: e.target.value
                             }))}
+                            disabled={registrationLoading}
                           />
                         </div>
                         <div className="form-group">
+                          <label>Email</label>
                           <input
                             type="email"
-                            placeholder="Email"
+                            placeholder="Введите ваш email"
                             value={registrationForm.email}
                             onChange={(e) => setRegistrationForm(prev => ({
                               ...prev, email: e.target.value
                             }))}
+                            disabled={registrationLoading}
                           />
                         </div>
                         <div className="form-group">
+                          <label>Телефон</label>
                           <input
                             type="tel"
-                            placeholder="Телефон"
+                            placeholder="Введите ваш телефон"
                             value={registrationForm.phone}
                             onChange={(e) => setRegistrationForm(prev => ({
                               ...prev, phone: e.target.value
                             }))}
+                            disabled={registrationLoading}
                           />
                         </div>
                       </div>
@@ -235,13 +290,14 @@ const EventsPage = () => {
                         <button 
                           className="btn btn-primary"
                           onClick={() => handleRegister(event.id)}
-                          disabled={!registrationForm.name || !registrationForm.email || !registrationForm.phone}
+                          disabled={!registrationForm.name || !registrationForm.email || !registrationForm.phone || registrationLoading}
                         >
-                          Подтвердить регистрацию
+                          {registrationLoading ? 'Регистрация...' : 'Подтвердить регистрацию'}
                         </button>
                         <button 
                           className="btn btn-secondary"
                           onClick={() => setShowRegistration(null)}
+                          disabled={registrationLoading}
                         >
                           Отмена
                         </button>

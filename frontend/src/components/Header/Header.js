@@ -35,7 +35,7 @@ const Header = () => {
         <Link to="/" className="logo">
           <div className="logo-icon"></div>
           <div className="logo-text">
-            <span className="logo-main">Кофейный дом</span>
+            <span className="logo-main">Книжный дом</span>
             <span className="logo-sub">Кофейня</span>
           </div>
         </Link>
