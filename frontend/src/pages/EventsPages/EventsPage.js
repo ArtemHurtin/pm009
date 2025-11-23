@@ -1,114 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './EventsPage.css';
 
-// Mock данные для мероприятий
-const mockEvents = [
-  {
-    id: '1',
-    title: 'Творческое занятие «Создание книжного амулета»',
-    description: 'Создать оригинальный оберег из бумаги своими руками',
-    date: '2024-11-04',
-    displayDate: '4 ноября',
-    time: '12:00',
-    maxParticipants: 30,
-    registeredUsers: [
-      { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567' },
-      { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568' }
-    ],
-    location: 'Кофейня "Книжный дом"',
-    price: 0,
-    imageUrl: '/images/events/poetry-evening.jpg'
-  },
-  {
-    id: '2',
-    title: '«Рисуем осеннюю историю»',
-    description: 'Участникам предоставляется материал для творчества',
-    date: '2024-11-06',
-    displayDate: '6 ноября',
-    time: '16:00',
-    maxParticipants: 15,
-    registeredUsers: [
-      { name: 'Мария', email: 'maria@mail.com', phone: '+79991234569' }
-    ],
-    location: 'Кофейня "Книжный дом"',
-    price: 500,
-    imageUrl: '/images/events/latte-art.jpg'
-  },
-  {
-    id: '3',
-    title: 'Мастер-класс «Волшебная шкатулка художника»',
-    description: 'Изготовление оригинальной шкатулки для хранения творческих сокровищ',
-    date: '2024-11-07',
-    displayDate: '7 ноября',
-    time: '14:00',
-    maxParticipants: 20,
-    registeredUsers: [
-      { name: 'Петр', email: 'petr@mail.com', phone: '+79991234570' },
-      { name: 'Ольга', email: 'olga@mail.com', phone: '+79991234571' },
-      { name: 'Сергей', email: 'sergey@mail.com', phone: '+79991234572' }
-    ],
-    location: 'Кофейня "Кофейный дом"',
-    price: 0,
-    imageUrl: '/images/events/book-club.jpg'
-  },
-  {
-    id: '4',
-    title: 'Встреча с автором',
-    description: 'Встреча с известным современным писателем и обсуждение его новой книги.',
-    date: '2024-03-05',
-    displayDate: '5 марта',
-    time: '19:30',
-    maxParticipants: 25,
-    registeredUsers: [],
-    location: 'Кофейня "Кофейный дом"',
-    price: 300,
-    imageUrl: '/images/events/author-meeting.jpg'
-  }
-];
-
-// Mock функции API
-const fetchEvents = async () => {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(mockEvents), 500);
-  });
-};
-
-const registerForEventAPI = async (eventId, registrationData) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log('Event registration:', eventId, registrationData);
-      
-      const event = mockEvents.find(e => e.id === eventId);
-      if (!event) {
-        reject(new Error('Мероприятие не найдено'));
-        return;
-      }
-      
-      if (event.registeredUsers.length >= event.maxParticipants) {
-        reject(new Error('Все места уже заняты'));
-        return;
-      }
-      
-      // Проверяем, не зарегистрирован ли уже пользователь с таким email
-      const existingRegistration = event.registeredUsers.find(
-        user => user.email === registrationData.email
-      );
-      
-      if (existingRegistration) {
-        reject(new Error('Пользователь с таким email уже зарегистрирован'));
-        return;
-      }
-      
-      event.registeredUsers.push({
-        ...registrationData,
-        registeredAt: new Date().toISOString()
-      });
-      
-      resolve({ success: true, message: 'Регистрация прошла успешно!' });
-    }, 1000);
-  });
-};
-
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -120,9 +12,101 @@ const EventsPage = () => {
   });
   const [registrationLoading, setRegistrationLoading] = useState(false);
 
+  // Mock данные для мероприятий
+  const mockEvents = [
+    {
+      id: '1',
+      title: 'Творческое занятие «Создание книжного амулета»',
+      description: 'Создать оригинальный оберег из бумаги своими руками',
+      date: '2024-11-04',
+      displayDate: '4 ноября',
+      time: '12:00',
+      maxParticipants: 30,
+      registeredUsers: [
+        { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567' },
+        { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568' }
+      ],
+      location: 'Кофейня "Книжный дом"',
+      price: 0,
+      imageUrl: '/images/events/poetry-evening.jpg'
+    },
+    {
+      id: '2',
+      title: '«Рисуем осеннюю историю»',
+      description: 'Участникам предоставляется материал для творчества',
+      date: '2024-11-06',
+      displayDate: '6 ноября',
+      time: '16:00',
+      maxParticipants: 15,
+      registeredUsers: [
+        { name: 'Мария', email: 'maria@mail.com', phone: '+79991234569' }
+      ],
+      location: 'Кофейня "Книжный дом"',
+      price: 500,
+      imageUrl: '/images/events/latte-art.jpg'
+    },
+    {
+      id: '3',
+      title: 'Мастер-класс «Волшебная шкатулка художника»',
+      description: 'Изготовление оригинальной шкатулки для хранения творческих сокровищ',
+      date: '2024-11-07',
+      displayDate: '7 ноября',
+      time: '14:00',
+      maxParticipants: 20,
+      registeredUsers: [
+        { name: 'Петр', email: 'petr@mail.com', phone: '+79991234570' },
+        { name: 'Ольга', email: 'olga@mail.com', phone: '+79991234571' },
+        { name: 'Сергей', email: 'sergey@mail.com', phone: '+79991234572' }
+      ],
+      location: 'Кофейня "Кофейный дом"',
+      price: 0,
+      imageUrl: '/images/events/book-club.jpg'
+    }
+  ];
+
+  // Mock функции API
+  const fetchEvents = async () => {
+    return new Promise(resolve => {
+      setTimeout(() => resolve(mockEvents), 500);
+    });
+  };
+
+  const registerForEventAPI = async (eventId, registrationData) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const event = mockEvents.find(e => e.id === eventId);
+        if (!event) {
+          reject(new Error('Мероприятие не найдено'));
+          return;
+        }
+        
+        if (event.registeredUsers.length >= event.maxParticipants) {
+          reject(new Error('Все места уже заняты'));
+          return;
+        }
+        
+        const existingRegistration = event.registeredUsers.find(
+          user => user.email === registrationData.email
+        );
+        
+        if (existingRegistration) {
+          reject(new Error('Пользователь с таким email уже зарегистрирован'));
+          return;
+        }
+        
+        event.registeredUsers.push({
+          ...registrationData,
+          registeredAt: new Date().toISOString()
+        });
+        
+        resolve({ success: true, message: 'Регистрация прошла успешно!' });
+      }, 1000);
+    });
+  };
+
   useEffect(() => {
     loadEvents();
-  }, []);
+  }, );
 
   const loadEvents = async () => {
     try {
@@ -130,7 +114,6 @@ const EventsPage = () => {
       setEvents(data);
     } catch (error) {
       console.error('Error loading events:', error);
-      // Fallback на mock данные в случае ошибки
       setEvents(mockEvents);
     } finally {
       setLoading(false);
@@ -143,7 +126,6 @@ const EventsPage = () => {
       return;
     }
 
-    // Простая валидация email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(registrationForm.email)) {
       alert('Пожалуйста, введите корректный email');
@@ -157,7 +139,6 @@ const EventsPage = () => {
       alert('Регистрация прошла успешно!');
       setShowRegistration(null);
       setRegistrationForm({ name: '', email: '', phone: '' });
-      // Обновляем список мероприятий
       const updatedEvents = await fetchEvents();
       setEvents(updatedEvents);
     } catch (error) {
