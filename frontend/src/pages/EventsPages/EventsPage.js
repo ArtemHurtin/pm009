@@ -5,33 +5,64 @@ import './EventsPage.css';
 const mockEvents = [
   {
     id: '1',
-    title: 'Встреча с Мариной Москвиной',
-    description: '«Путешествие писателя сквозь детские мечты»',
-    date: '2024-11-02',
-    displayDate: '2 ноября',
-    time: '15:00',
-    maxParticipants: 30,
-    registeredUsers: 15
-  },
-  {
-    id: '2',
-    title: 'Беседа с Дмитрием Глуховский',
-    description: '«Будущее современной русской прозы»',
-    date: '2024-11-03',
-    displayDate: '3 ноября',
-    time: '18:00',
-    maxParticipants: 15,
-    registeredUsers: 8
-  },
-  {
-    id: '3',
     title: 'Творческое занятие «Создание книжного амулета»',
-    description: 'Задача: Создать оригинальный оберег из бумаги своими руками',
+    description: 'Создать оригинальный оберег из бумаги своими руками',
     date: '2024-11-04',
     displayDate: '4 ноября',
     time: '12:00',
+    maxParticipants: 30,
+    registeredUsers: [
+      { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567' },
+      { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568' }
+    ],
+    location: 'Кофейня "Книжный дом"',
+    price: 0,
+    imageUrl: '/images/events/poetry-evening.jpg'
+  },
+  {
+    id: '2',
+    title: '«Рисуем осеннюю историю»',
+    description: 'Участникам предоставляется материал для творчества',
+    date: '2024-11-06',
+    displayDate: '6 ноября',
+    time: '16:00',
+    maxParticipants: 15,
+    registeredUsers: [
+      { name: 'Мария', email: 'maria@mail.com', phone: '+79991234569' }
+    ],
+    location: 'Кофейня "Книжный дом"',
+    price: 500,
+    imageUrl: '/images/events/latte-art.jpg'
+  },
+  {
+    id: '3',
+    title: 'Мастер-класс «Волшебная шкатулка художника»',
+    description: 'Изготовление оригинальной шкатулки для хранения творческих сокровищ',
+    date: '2024-11-07',
+    displayDate: '7 ноября',
+    time: '14:00',
     maxParticipants: 20,
-    registeredUsers: 12
+    registeredUsers: [
+      { name: 'Петр', email: 'petr@mail.com', phone: '+79991234570' },
+      { name: 'Ольга', email: 'olga@mail.com', phone: '+79991234571' },
+      { name: 'Сергей', email: 'sergey@mail.com', phone: '+79991234572' }
+    ],
+    location: 'Кофейня "Кофейный дом"',
+    price: 0,
+    imageUrl: '/images/events/book-club.jpg'
+  },
+  {
+    id: '4',
+    title: 'Встреча с автором',
+    description: 'Встреча с известным современным писателем и обсуждение его новой книги.',
+    date: '2024-03-05',
+    displayDate: '5 марта',
+    time: '19:30',
+    maxParticipants: 25,
+    registeredUsers: [],
+    location: 'Кофейня "Кофейный дом"',
+    price: 300,
+    imageUrl: '/images/events/author-meeting.jpg'
   }
 ];
 
@@ -48,8 +79,11 @@ const registerForEventAPI = async (eventId, registrationData) => {
       console.log('Event registration:', eventId, registrationData);
       // Находим событие и увеличиваем счетчик участников
       const event = mockEvents.find(e => e.id === eventId);
-      if (event && event.registeredUsers < event.maxParticipants) {
-        event.registeredUsers += 1;
+      if (event && event.registeredUsers.length < event.maxParticipants) {
+        event.registeredUsers.push({
+          ...registrationData,
+          registeredAt: new Date().toISOString()
+        });
       }
       resolve({ success: true, message: 'Регистрация прошла успешно!' });
     }, 1000);
@@ -138,9 +172,9 @@ const EventsPage = () => {
                   <p className="event-description">{event.description}</p>
                   <div className="event-meta">
                     <span className="participants">
-                      👥 {event.registeredUsers}/{event.maxParticipants} участников
+                      👥 {event.registeredUsers.length}/{event.maxParticipants} участников
                     </span>
-                    {event.registeredUsers < event.maxParticipants ? (
+                    {event.registeredUsers.length < event.maxParticipants ? (
                       <button 
                         className="btn btn-primary"
                         onClick={() => setShowRegistration(event.id)}

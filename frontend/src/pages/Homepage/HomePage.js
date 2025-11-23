@@ -1,36 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getReviews, getEvents, getMenuItems } from '/../services/api';
+import { getMenuItems } from '../../services/api'; 
 import './HomePage.css';
 
 const HomePage = () => {
-  const [reviews, setReviews] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
+  const [featuredData, setFeaturedData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const [reviewsData, eventsData, menuData] = await Promise.all([
-          getReviews(),
-          getEvents(),
-          getMenuItems()
-        ]);
-        setReviews(reviewsData);
-        setEvents(eventsData);
-        // Берем только кофе для превью
-        setMenuItems(menuData.filter(item => item.category === 'coffee').slice(0, 3));
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    loadFeaturedData();
   }, []);
+
+  const loadFeaturedData = async () => {
+    try {
+      const data = await getMenuItems(); // получаем все элементы меню
+      // Фильтруем featured меню (isBestseller) и книги (категория books и isBestseller)
+      const featuredMenu = data.filter(item => item.isBestseller).slice(0, 4);
+      const featuredBooks = data.filter(item => item.category === 'books' && item.isBestseller).slice(0, 3);
+      setFeaturedData({ featuredMenu, featuredBooks });
+    } catch (error) {
+      console.error('Error loading featured items:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return <div className="loading">Загрузка...</div>;
@@ -38,138 +30,44 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      <section className="hero-section">
-        <div className="container">
-          <div className="hero-content">
-            <h1>Кофейня "Кофейный дом"</h1>
-            <p>Место, где встречаются ароматный кофе и увлекательные книги</p>
-            <div className="hero-buttons">
-              <Link to="/menu" className="btn btn-primary">Посмотреть меню</Link>
-              <Link to="/booking" className="btn btn-secondary">Забронировать столик</Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="container">
+        <section className="hero-section">
+          <h1>Добро пожаловать в BestBooks Café</h1>
+          <p>Место, где встречаются любовь к книгам и вкусному кофе</p>
+          <button className="btn btn-primary">Посмотреть меню</button>
+        </section>
 
-      <section className="about-section">
-        <div className="container">
-          <h2 className="section-title">Добро пожаловать в нашу кофейню</h2>
-          <div className="about-content">
-            <div className="about-text">
-              <p className="about-intro">
-                «Кофейный дом» — Наш кофейный дом — это уютное убежище, где каждая страница любимой книги раскрывается заново благодаря чарующему аромату свежезаваренного кофе и атмосфере абсолютного покоя. Пространство, наполненное удобством мягких кресел, изысканной подборкой литературных шедевров и непревзойденным вкусом напитка, позволяет забыть о повседневной спешке и окунуться в тихое удовольствие чтения.
-
-              </p>
-              <div className="about-features">
-                <div className="feature">
-                  <span className="feature-icon">☕</span>
-                  <h3>Качественный кофе</h3>
-                  <p>Отборные зерна от проверенных обжарщиков</p>
-                </div>
-                <div className="feature">
-                  <span className="feature-icon">📚</span>
-                  <h3>Библиотека</h3>
-                  <p>Тщательно подобранная коллекция книг</p>
-                </div>
-                <div className="feature">
-                  <span className="feature-icon">🎭</span>
-                  <h3>Мероприятия</h3>
-                  <p>Литературные вечера и творческие встречи</p>
-                </div>
-              </div>
-            </div>
-            <div className="about-image">
-              <div className="image-placeholder">
-                <span>Изображение интерьера кофейни</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="menu-preview">
-        <div className="container">
-          <h2 className="section-title">Популярные позиции</h2>
-          <div className="menu-grid">
-            {menuItems.map(item => (
-              <div key={item.id} className="menu-item-card">
-                <div className="item-image">
-                  <div className="image-placeholder small">
-                    <span>{item.name}</span>
+        {featuredData && (
+          <>
+            <section className="featured-section">
+              <h2>Рекомендуемые книги</h2>
+              <div className="books-grid">
+                {featuredData.featuredBooks.map(book => (
+                  <div key={book.id} className="book-card">
+                    <h3>{book.name}</h3>
+                    <p className="author">{book.author}</p>
+                    <p className="description">{book.description}</p>
+                    <div className="price">{book.price} ₽</div>
                   </div>
-                  {item.isBestseller && <span className="bestseller-badge">Хит</span>}
-                </div>
-                <div className="item-info">
-                  <h3>{item.name}</h3>
-                  <p>{item.description}</p>
-                  <div className="item-price">{item.price} ₽</div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="text-center">
-            <Link to="/menu" className="btn btn-secondary">Всё меню</Link>
-          </div>
-        </div>
-      </section>
+            </section>
 
-      <section className="events-preview">
-        <div className="container">
-          <h2 className="section-title">Ближайшие мероприятия</h2>
-          <div className="events-grid">
-            {events.slice(0, 3).map(event => (
-              <div key={event.id} className="event-card">
-                <div className="event-date">
-                  <span className="date-day">{new Date(event.date).getDate()}</span>
-                  <span className="date-month">
-                    {new Date(event.date).toLocaleString('ru-RU', { month: 'short' })}
-                  </span>
-                </div>
-                <div className="event-info">
-                  <h3>{event.title}</h3>
-                  <p className="event-time">🕒 {event.time}</p>
-                  <p className="event-description">{event.description}</p>
-                  <div className="event-meta">
-                    <span>👥 {event.registeredUsers.length} участников</span>
+            <section className="featured-section">
+              <h2>Популярные позиции</h2>
+              <div className="menu-grid">
+                {featuredData.featuredMenu.map(item => (
+                  <div key={item.id} className="menu-item-card">
+                    <h3>{item.name}</h3>
+                    <p className="description">{item.description}</p>
+                    <div className="price">{item.price} ₽</div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="text-center">
-            <Link to="/events" className="btn btn-secondary">Все мероприятия</Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="testimonials-section">
-        <div className="container">
-          <h2 className="section-title">Отзывы наших гостей</h2>
-          <div className="reviews-grid">
-            {reviews.map(review => (
-              <div key={review.id} className="review-card">
-                <div className="review-header">
-                  <div className="review-author">
-                    <span className="author-avatar">
-                      {review.authorName.charAt(0).toUpperCase()}
-                    </span>
-                    <div>
-                      <span className="author-name">{review.authorName}</span>
-                      <div className="review-rating">
-                        {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="review-date">
-                    {new Date(review.createdAt).toLocaleDateString('ru-RU')}
-                  </span>
-                </div>
-                <p className="review-text">"{review.text}"</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </section>
+          </>
+        )}
+      </div>
     </div>
   );
 };
