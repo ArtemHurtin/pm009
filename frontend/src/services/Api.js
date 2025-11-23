@@ -276,41 +276,8 @@ const isValidEmail = (email) => {
 };
 
 const isValidPhone = (phone) => {
-  const phoneRegex = /^\+?[78][-\(]?\d{3}\)?-?\d{3}-?\d{2}-?\d{2}$/;
+  const phoneRegex = /^\+?[78][-(]?\d{3}[)-]?\d{3}-?\d{2}-?\d{2}$/;
   return phoneRegex.test(phone);
-};
-
-// Базовый API клиент
-const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_CONFIG.BASE_URL}${endpoint}`;
-  
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  };
-
-  if (config.body && typeof config.body === 'object') {
-    config.body = JSON.stringify(config.body);
-  }
-
-  try {
-    console.log(`API Request: ${config.method || 'GET'} ${url}`, config);
-    
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw new Error(error.message || 'Ошибка соединения с сервером');
-  }
 };
 
 // Menu API
@@ -328,11 +295,7 @@ export const getMenuItems = async () => {
 export const getMenuItemsByCategory = async (category) => {
   try {
     await delay(500);
-    
-    const filteredItems = mockMenuItems.filter(item => 
-      item.category === category
-    );
-    
+    const filteredItems = mockMenuItems.filter(item => item.category === category);
     return filteredItems;
   } catch (error) {
     console.error(`Error fetching menu items for category ${category}:`, error);
@@ -343,12 +306,10 @@ export const getMenuItemsByCategory = async (category) => {
 export const getMenuItem = async (id) => {
   try {
     await delay(300);
-    
     const item = mockMenuItems.find(item => item.id === id);
     if (!item) {
       throw new Error('Элемент меню не найден');
     }
-    
     return item;
   } catch (error) {
     console.error(`Error fetching menu item ${id}:`, error);
@@ -362,7 +323,6 @@ export const createBooking = async (bookingData) => {
     await delay(1500);
     simulateNetworkError(0.1);
 
-    // Валидация данных
     if (!bookingData.name || !bookingData.email || !bookingData.phone) {
       throw new Error('Пожалуйста, заполните все обязательные поля');
     }
@@ -408,10 +368,7 @@ export const getBookings = async () => {
 export const checkAvailability = async (date, time, guests) => {
   try {
     await delay(600);
-
-    // Имитация проверки доступности
-    const isAvailable = Math.random() > 0.3; // 70% chance available
-
+    const isAvailable = Math.random() > 0.3;
     return {
       isAvailable,
       message: isAvailable 
@@ -439,12 +396,10 @@ export const getEvents = async () => {
 export const getEvent = async (id) => {
   try {
     await delay(400);
-    
     const event = mockEvents.find(event => event.id === id);
     if (!event) {
       throw new Error('Мероприятие не найдено');
     }
-    
     return event;
   } catch (error) {
     console.error(`Error fetching event ${id}:`, error);
@@ -455,7 +410,6 @@ export const getEvent = async (id) => {
 export const getUpcomingEvents = async () => {
   try {
     await delay(500);
-    
     const today = new Date().toISOString().split('T')[0];
     return mockEvents.filter(event => event.date >= today);
   } catch (error) {
@@ -468,7 +422,6 @@ export const registerForEvent = async (eventId, registrationData) => {
   try {
     await delay(1200);
 
-    // Валидация данных
     if (!registrationData.name || !registrationData.email || !registrationData.phone) {
       throw new Error('Пожалуйста, заполните все обязательные поля');
     }
@@ -482,12 +435,10 @@ export const registerForEvent = async (eventId, registrationData) => {
       throw new Error('Мероприятие не найдено');
     }
 
-    // Проверяем доступность мест
     if (event.registeredUsers.length >= event.maxParticipants) {
       throw new Error('К сожалению, все места на это мероприятие уже заняты');
     }
 
-    // Проверяем, не зарегистрирован ли уже пользователь
     const isAlreadyRegistered = event.registeredUsers.some(
       user => user.email === registrationData.email
     );
@@ -496,7 +447,6 @@ export const registerForEvent = async (eventId, registrationData) => {
       throw new Error('Вы уже зарегистрированы на это мероприятие');
     }
 
-    // Добавляем участника
     event.registeredUsers.push({
       ...registrationData,
       registeredAt: new Date().toISOString()
@@ -568,7 +518,6 @@ export const createReview = async (reviewData) => {
     await delay(1000);
     simulateNetworkError(0.05);
 
-    // Валидация данных
     if (!reviewData.authorName || !reviewData.email || !reviewData.text) {
       throw new Error('Пожалуйста, заполните все обязательные поля');
     }
@@ -585,7 +534,7 @@ export const createReview = async (reviewData) => {
       id: generateId('RV'),
       ...reviewData,
       createdAt: new Date().toISOString().split('T')[0],
-      status: 'pending' // Отзыв ожидает модерации
+      status: 'pending'
     };
 
     mockReviews.push(newReview);
@@ -607,7 +556,6 @@ export const sendContactMessage = async (messageData) => {
     await delay(800);
     simulateNetworkError(0.05);
 
-    // Валидация данных
     if (!messageData.name || !messageData.email || !messageData.message) {
       throw new Error('Пожалуйста, заполните все обязательные поля');
     }
@@ -661,34 +609,28 @@ export const updateReviewStatus = async (reviewId, status) => {
   }
 };
 
-// Экспорт всех функций
-export default {
-  // Menu
+// Создаем именованный объект для экспорта
+const api = {
   getMenuItems,
   getMenuItemsByCategory,
   getMenuItem,
-  
-  // Bookings
   createBooking,
   getBookings,
   checkAvailability,
   updateBookingStatus,
-  
-  // Events
   getEvents,
   getEvent,
   getUpcomingEvents,
   registerForEvent,
   createEvent,
-  
-  // Reviews
   getReviews,
   getApprovedReviews,
   getFeaturedReviews,
   createReview,
   updateReviewStatus,
-  
-  // Contact
   sendContactMessage,
   getContactMessages
 };
+
+// Экспортируем именованный объект по умолчанию
+export default api;
