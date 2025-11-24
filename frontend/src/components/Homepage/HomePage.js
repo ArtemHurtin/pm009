@@ -42,7 +42,7 @@ const HomePage = () => {
     <div className="home-page">
       <div className="container">
         <section className="hero-section">
-          <h1>Добро пожаловать в Best Books Cafe</h1>
+          <h1>Добро пожаловать в Кофейный дом</h1>
           <p>Место, где встречаются любовь к книгам и вкусному кофе</p>
           <button className="btn btn-primary">Посмотреть меню</button>
         </section>

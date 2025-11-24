@@ -19,7 +19,7 @@ exports.sendBookingConfirmation = async (booking) => {
     const transporter = createTransporter();
     
     const mailOptions = {
-      from: `"Кофейня Лучшие книги" <${process.env.SMTP_FROM}>`,
+      from: `"Кофейня Кофейный дом" <${process.env.SMTP_FROM}>`,
       to: booking.email,
       subject: 'Подтверждение бронирования столика',
       html: `
@@ -38,7 +38,7 @@ exports.sendBookingConfirmation = async (booking) => {
           </div>
           
           <p>Ждём вас в нашей кофейне!</p>
-          <p>С уважением,<br>Команда кофейни "Лучшие книги"</p>
+          <p>С уважением,<br>Команда кофейни "Кофейный дом"</p>
         </div>
       `
     };
@@ -56,7 +56,7 @@ exports.sendNewMessageNotification = async (message) => {
     const transporter = createTransporter();
     
     const mailOptions = {
-      from: `"Кофейня "Книжный дом" <${process.env.SMTP_FROM}>`,
+      from: `"Кофейня "Кофейный дом" <${process.env.SMTP_FROM}>`,
       to: process.env.ADMIN_EMAIL,
       subject: 'Новое сообщение с сайта',
       html: `

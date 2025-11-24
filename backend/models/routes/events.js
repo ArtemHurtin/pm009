@@ -15,7 +15,7 @@ const events = [
       { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567' },
       { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568' }
     ],
-    location: 'Кофейня "Книжный дом"',
+    location: 'Кофейня "Кофейный дом"',
     price: 0,
     imageUrl: '/images/events/poetry-evening.jpg'
   },
@@ -30,7 +30,7 @@ const events = [
     registeredUsers: [
       { name: 'Мария', email: 'maria@mail.com', phone: '+79991234569' }
     ],
-    location: 'Кофейня "Книжный дом"',
+    location: 'Кофейня "Кофейный дом"',
     price: 500,
     imageUrl: '/images/events/latte-art.jpg'
   }

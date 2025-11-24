@@ -392,7 +392,7 @@ const initializeSampleData = async () => {
           { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567' },
           { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568' }
         ],
-        location: 'Кофейня "Книжный дом"',
+        location: 'Кофейня "Кофейный дом"',
         price: 0,
         imageUrl: '/images/events/poetry-evening.jpg'
       }
@@ -409,7 +409,7 @@ mongoose.connection.once('open', () => {
 // Basic route
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to Best Books Cafe API',
+    message: 'Welcome to Coffe Books API',
     version: '1.0.0',
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     endpoints: {
@@ -444,7 +444,7 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`📚 Best Books Cafe API is ready!`);
+  console.log(`📚  Coffe Books API is ready!`);
   console.log(`🔗 http://localhost:${PORT}`);
   console.log(`⚙️  Environment: ${process.env.NODE_ENV}`);
   console.log(`🗄️  MongoDB: ${mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'}`);
