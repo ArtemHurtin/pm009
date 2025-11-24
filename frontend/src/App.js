@@ -2,12 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-import HomePage from './Homepage/HomePage';
-import MenuPage from './MenuPage/MenuPage';
-import BookingPage from './BookingPage/BookingPage';
-import EventsPage from './components/EventsPage';
-import BlogPage from './BlogPage/BlogPage';
-import ContactsPage from './ContactsPage/ContactsPage';
+import HomePage from './components/Homepage/HomePage';
+import MenuPage from './components/MenuPage/MenuPage';
+import BookingPage from './components/BookingPage/BookingPage';
+import EventsPage from './components/EventsPage/EventsPage';
+import BlogPage from './components/BlogPage/BlogPage';
+import ContactsPage from './components/ContactsPage/ContactsPage';
 import './App.css';
 
 function App() {
