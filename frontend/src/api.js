@@ -224,7 +224,7 @@ const mockData = {
         { name: 'Анна', email: 'anna@mail.com', phone: '+79991234567', registeredAt: '2024-10-20' },
         { name: 'Иван', email: 'ivan@mail.com', phone: '+79991234568', registeredAt: '2024-10-21' }
       ],
-      location: 'Кофейня "Книжный дом"',
+      location: 'Кофейня "Кофейный дом"',
       price: 0,
       imageUrl: '/images/events/poetry-evening.jpg',
       tags: ['творчество', 'рукоделие', 'бесплатно'],
@@ -241,7 +241,7 @@ const mockData = {
       registeredUsers: [
         { name: 'Мария', email: 'maria@mail.com', phone: '+79991234569', registeredAt: '2024-10-22' }
       ],
-      location: 'Кофейня "Книжный дом"',
+      location: 'Кофейня "Кофейный дом"',
       price: 500,
       imageUrl: '/images/events/latte-art.jpg',
       tags: ['рисование', 'творчество'],

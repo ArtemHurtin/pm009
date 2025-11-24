@@ -26,7 +26,7 @@ exports.sendBookingConfirmation = async (booking) => {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #8B4513;">Подтверждение бронирования</h2>
           <p>Уважаемый(ая) ${booking.customerName},</p>
-          <p>Ваше бронирование в кофейне "Лучшие книги" подтверждено!</p>
+          <p>Ваше бронирование в кофейне "Кофейный дом" подтверждено!</p>
           
           <div style="background: #f9f5f0; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #654321;">Детали бронирования:</h3>

@@ -77,7 +77,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2024 Кофейня "Книжный дом". Все права защищены.</p>
+          <p>&copy; 2024 Кофейня "Кофейный дом". Все права защищены.</p>
         </div>
       </div>
     </footer>
