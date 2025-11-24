@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchMenu } from '../../services/api'; // Исправлен импорт
+import { fetchMenu } from '../../services/api';
 import './HomePage.css';
 
 const HomePage = () => {
